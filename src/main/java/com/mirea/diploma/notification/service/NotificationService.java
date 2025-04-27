@@ -1,9 +1,9 @@
 package com.mirea.diploma.notification.service;
 
-import com.mirea.diploma.notification.model.Notification;
+import com.mirea.diploma.notification.dto.*;
 import java.util.List;
 
 public interface NotificationService {
-    List<Notification> getNotifications(Long userId);
-    Notification markAsRead(Long notificationId);
+    List<NotificationDto> getForUser(Long userId);
+    NotificationDto markRead(Long id);
 }

@@ -1,15 +1,14 @@
 package com.mirea.diploma.practice.service;
 
-import com.mirea.diploma.practice.dto.PracticeReportDto;
-import com.mirea.diploma.practice.model.PracticeReport;
-import com.mirea.diploma.practice.model.PracticeVersion;
-import com.mirea.diploma.practice.model.Block;
+import com.mirea.diploma.practice.dto.*;
 import java.util.List;
 
 public interface PracticeService {
-    List<PracticeReport> getAllPractices();
-    PracticeReport createPractice(PracticeReportDto dto);
-    PracticeReport submitPractice(Long id);
-    PracticeVersion createVersion(Long reportId, PracticeVersion version);
-    Block addBlock(Long versionId, Block block);
+    List<PracticeDto> listForStudent(Long studentId);
+    PracticeDto createPractice(PracticeDto dto);
+    PracticeDto updatePractice(Long id, PracticeDto dto);
+    List<VersionDto> listVersions(Long practiceId);
+    VersionDto createVersion(Long practiceId, VersionDto dto);
+    List<BlockDto> listBlocks(Long versionId);
+    BlockDto addBlock(Long versionId, BlockDto dto);
 }

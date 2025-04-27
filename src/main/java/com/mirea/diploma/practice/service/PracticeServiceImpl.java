@@ -1,56 +1,105 @@
 package com.mirea.diploma.practice.service;
 
-import com.mirea.diploma.practice.dto.PracticeReportDto;
-import com.mirea.diploma.practice.model.PracticeReport;
-import com.mirea.diploma.practice.model.PracticeVersion;
-import com.mirea.diploma.practice.model.Block;
-import com.mirea.diploma.practice.repository.PracticeReportRepository;
-import com.mirea.diploma.practice.repository.PracticeVersionRepository;
-import com.mirea.diploma.practice.repository.BlockRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.Date;
+import com.mirea.diploma.practice.dto.*;
+import com.mirea.diploma.practice.model.*;
+import com.mirea.diploma.practice.repository.*;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PracticeServiceImpl implements PracticeService {
-    private final PracticeReportRepository reportRepository;
-    private final PracticeVersionRepository versionRepository;
-    private final BlockRepository blockRepository;
-    public PracticeServiceImpl(PracticeReportRepository reportRepository, PracticeVersionRepository versionRepository, BlockRepository blockRepository) {
-        this.reportRepository = reportRepository;
-        this.versionRepository = versionRepository;
-        this.blockRepository = blockRepository;
-    }
+    private final PracticeRepository practiceRepo;
+    private final VersionRepository versionRepo;
+    private final BlockRepository blockRepo;
+
     @Override
-    public List<PracticeReport> getAllPractices() {
-        return reportRepository.findAll();
+    public List<PracticeDto> listForStudent(Long studentId) {
+        return practiceRepo.findByStudentId(studentId).stream().map(p ->
+                PracticeDto.builder()
+                        .id(p.getId())
+                        .studentId(p.getStudent().getId())
+                        .practiceName(p.getPracticeName())
+                        .versionsAmount(p.getVersionsAmount())
+                        .lastModified(p.getLastModified())
+                        .build()
+        ).collect(Collectors.toList());
     }
+
     @Override
-    public PracticeReport createPractice(PracticeReportDto dto) {
-        PracticeReport report = new PracticeReport();
-        report.setStudentId(dto.getStudentId());
-        report.setSupervisorId(dto.getSupervisorId());
-        report.setStatus("DRAFT");
-        report.setCreatedAt(new Date());
-        return reportRepository.save(report);
+    public PracticeDto createPractice(PracticeDto dto) {
+        Practice p = Practice.builder()
+                .student(new com.mirea.diploma.auth.model.User() {{ setId(dto.getStudentId()); }})
+                .practiceName(dto.getPracticeName())
+                .versionsAmount(0)
+                .lastModified(LocalDateTime.now())
+                .build();
+        Practice saved = practiceRepo.save(p);
+        return dto.toBuilder().id(saved.getId()).build();
     }
+
     @Override
-    public PracticeReport submitPractice(Long id) {
-        PracticeReport report = reportRepository.findById(id).orElseThrow();
-        report.setStatus("SUBMITTED");
-        return reportRepository.save(report);
+    public PracticeDto updatePractice(Long id, PracticeDto dto) {
+        Practice p = practiceRepo.findById(id).orElseThrow();
+        p.setPracticeName(dto.getPracticeName());
+        p.setLastModified(LocalDateTime.now());
+        Practice upd = practiceRepo.save(p);
+        return dto.toBuilder().id(upd.getId()).lastModified(upd.getLastModified()).build();
     }
+
     @Override
-    public PracticeVersion createVersion(Long reportId, PracticeVersion version) {
-        PracticeReport report = reportRepository.findById(reportId).orElseThrow();
-        version.setPracticeReport(report);
-        version.setCreatedAt(new Date());
-        return versionRepository.save(version);
+    public List<VersionDto> listVersions(Long practiceId) {
+        return versionRepo.findByPracticeIdOrderByVersionNumber(practiceId).stream().map(v ->
+                VersionDto.builder()
+                        .id(v.getId())
+                        .versionNumber(v.getVersionNumber())
+                        .uploadTime(v.getUploadTime())
+                        .build()
+        ).collect(Collectors.toList());
     }
+
     @Override
-    public Block addBlock(Long versionId, Block block) {
-        PracticeVersion version = versionRepository.findById(versionId).orElseThrow();
-        block.setPracticeVersion(version);
-        return blockRepository.save(block);
+    public VersionDto createVersion(Long practiceId, VersionDto dto) {
+        Practice p = practiceRepo.findById(practiceId).orElseThrow();
+        Version v = Version.builder()
+                .practice(p)
+                .versionNumber(dto.getVersionNumber())
+                .uploadTime(LocalDateTime.now())
+                .build();
+        Version saved = versionRepo.save(v);
+        p.setVersionsAmount(p.getVersionsAmount() + 1);
+        p.setLastModified(LocalDateTime.now());
+        practiceRepo.save(p);
+        return dto.toBuilder().id(saved.getId()).uploadTime(saved.getUploadTime()).build();
+    }
+
+    @Override
+    public List<BlockDto> listBlocks(Long versionId) {
+        return blockRepo.findByVersionIdOrderByOrderNumber(versionId).stream().map(b ->
+                BlockDto.builder()
+                        .id(b.getId())
+                        .orderNumber(b.getOrderNumber())
+                        .contentType(b.getContentType())
+                        .content(b.getContent())
+                        .build()
+        ).collect(Collectors.toList());
+    }
+
+    @Override
+    public BlockDto addBlock(Long versionId, BlockDto dto) {
+        Version v = versionRepo.findById(versionId).orElseThrow();
+        Block b = Block.builder()
+                .version(v)
+                .orderNumber(dto.getOrderNumber())
+                .contentType(dto.getContentType())
+                .content(dto.getContent())
+                .build();
+        Block saved = blockRepo.save(b);
+        v.setUploadTime(LocalDateTime.now());
+        versionRepo.save(v);
+        return dto.toBuilder().id(saved.getId()).build();
     }
 }

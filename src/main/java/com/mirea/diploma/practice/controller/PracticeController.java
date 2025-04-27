@@ -1,31 +1,53 @@
 package com.mirea.diploma.practice.controller;
 
-import com.mirea.diploma.practice.dto.PracticeReportDto;
-import com.mirea.diploma.practice.model.PracticeReport;
-import com.mirea.diploma.practice.model.PracticeVersion;
-import com.mirea.diploma.practice.model.Block;
-import com.mirea.diploma.practice.service.PracticeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.mirea.diploma.practice.dto.*;
+import com.mirea.diploma.practice.service.PracticeService;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/practices")
+@RequiredArgsConstructor
 public class PracticeController {
-    private final PracticeService practiceService;
-    public PracticeController(PracticeService practiceService) {
-        this.practiceService = practiceService;
-    }
+    private final PracticeService svc;
+
     @GetMapping
-    public ResponseEntity<List<PracticeReport>> getAllPractices() {
-        return ResponseEntity.ok(practiceService.getAllPractices());
+    public ResponseEntity<List<PracticeDto>> list(@RequestParam Long studentId) {
+        return ResponseEntity.ok(svc.listForStudent(studentId));
     }
+
     @PostMapping
-    public ResponseEntity<PracticeReport> createPractice(@RequestBody PracticeReportDto dto) {
-        return ResponseEntity.ok(practiceService.createPractice(dto));
+    public ResponseEntity<PracticeDto> create(@RequestBody PracticeDto dto) {
+        return ResponseEntity.ok(svc.createPractice(dto));
     }
-    @PostMapping("/{id}/submit")
-    public ResponseEntity<PracticeReport> submitPractice(@PathVariable Long id) {
-        return ResponseEntity.ok(practiceService.submitPractice(id));
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PracticeDto> update(@PathVariable Long id,
+                                              @RequestBody PracticeDto dto) {
+        return ResponseEntity.ok(svc.updatePractice(id, dto));
+    }
+
+    @GetMapping("/{id}/versions")
+    public ResponseEntity<List<VersionDto>> versions(@PathVariable Long id) {
+        return ResponseEntity.ok(svc.listVersions(id));
+    }
+
+    @PostMapping("/{id}/versions")
+    public ResponseEntity<VersionDto> createVersion(@PathVariable Long id,
+                                                    @RequestBody VersionDto dto) {
+        return ResponseEntity.ok(svc.createVersion(id, dto));
+    }
+
+    @GetMapping("/versions/{verId}/blocks")
+    public ResponseEntity<List<BlockDto>> blocks(@PathVariable Long verId) {
+        return ResponseEntity.ok(svc.listBlocks(verId));
+    }
+
+    @PostMapping("/versions/{verId}/blocks")
+    public ResponseEntity<BlockDto> addBlock(@PathVariable Long verId,
+                                             @RequestBody BlockDto dto) {
+        return ResponseEntity.ok(svc.addBlock(verId, dto));
     }
 }

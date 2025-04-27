@@ -1,29 +1,31 @@
 package com.mirea.diploma.practice.model;
 
+import lombok.*;
+
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "blocks")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Block {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long blockId;
+    private Long id;
+
     @ManyToOne
     @JoinColumn(name = "version_id", nullable = false)
-    private PracticeVersion practiceVersion;
-    private String type;
-    @Column(columnDefinition = "TEXT")
-    private String content;
-    private Integer position;
+    private Version version;
 
-    public Long getBlockId() { return blockId; }
-    public void setBlockId(Long blockId) { this.blockId = blockId; }
-    public PracticeVersion getPracticeVersion() { return practiceVersion; }
-    public void setPracticeVersion(PracticeVersion practiceVersion) { this.practiceVersion = practiceVersion; }
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
-    public Integer getPosition() { return position; }
-    public void setPosition(Integer position) { this.position = position; }
+    @Column(name = "order_number", nullable = false)
+    private Integer orderNumber;
+
+    @Column(name = "content_type", nullable = false)
+    private String contentType; // e.g. TITLE, TEXT, IMAGE, LIST, TABLE
+
+    @Lob
+    @Column(nullable = false)
+    private String content;
 }

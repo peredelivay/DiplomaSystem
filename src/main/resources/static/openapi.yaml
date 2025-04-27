@@ -1,0 +1,371 @@
+openapi: 3.0.3
+info:
+  title: Diploma API
+  version: v1
+  description: |
+    REST API для системы организации выполнения ВКР  
+    Модули: аутентификация, практики, чат, уведомления.
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: Auth
+  - name: Practice
+  - name: Chat
+  - name: Notification
+
+paths:
+  /api/auth/register:
+    post:
+      tags: [Auth]
+      summary: Регистрация нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Успешная регистрация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+
+  /api/auth/login:
+    post:
+      tags: [Auth]
+      summary: Логин
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Успешная авторизация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+
+  /api/practices:
+    get:
+      tags: [Practice]
+      summary: Список практик студента
+      parameters:
+        - name: studentId
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Массив PracticeDto
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PracticeDto'
+
+    post:
+      tags: [Practice]
+      summary: Создать новую практику
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PracticeDto'
+      responses:
+        '200':
+          description: Созданная практика
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PracticeDto'
+
+  /api/practices/{id}:
+    put:
+      tags: [Practice]
+      summary: Обновить практику
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PracticeDto'
+      responses:
+        '200':
+          description: Обновлённая практика
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PracticeDto'
+
+  /api/practices/{id}/versions:
+    get:
+      tags: [Practice]
+      summary: Список версий практики
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Массив VersionDto
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VersionDto'
+
+    post:
+      tags: [Practice]
+      summary: Создать новую версию
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VersionDto'
+      responses:
+        '200':
+          description: Созданная версия
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionDto'
+
+  /api/practices/versions/{verId}/blocks:
+    get:
+      tags: [Practice]
+      summary: Список блоков версии
+      parameters:
+        - name: verId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Массив BlockDto
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BlockDto'
+    post:
+      tags: [Practice]
+      summary: Добавить блок в версию
+      parameters:
+        - name: verId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlockDto'
+      responses:
+        '200':
+          description: Созданный блок
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockDto'
+
+  /api/chats:
+    post:
+      tags: [Chat]
+      summary: Получить или создать чат
+      parameters:
+        - name: studentId
+          in: query
+          required: true
+          schema: { type: integer }
+        - name: supervisorId
+          in: query
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Чат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatDto'
+
+  /api/chats/{chatId}/messages:
+    get:
+      tags: [Chat]
+      summary: История сообщений
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Массив MessageDto
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageDto'
+
+    post:
+      tags: [Chat]
+      summary: Отправить сообщение
+      parameters:
+        - name: chatId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageDto'
+      responses:
+        '200':
+          description: Созданное сообщение
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDto'
+
+  /api/notifications/{userId}:
+    get:
+      tags: [Notification]
+      summary: Список уведомлений пользователя
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Массив NotificationDto
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationDto'
+
+  /api/notifications/{id}/read:
+    put:
+      tags: [Notification]
+      summary: Отметить уведомление прочитанным
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Обновлённое уведомление
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationDto'
+
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      required: [name,email,password,groupName,role]
+      properties:
+        name:         { type: string }
+        email:        { type: string, format: email }
+        password:     { type: string }
+        groupName:    { type: string }
+        role:         { type: string, example: "STUDENT" }
+        supervisorId: { type: integer, nullable: true }
+
+    LoginRequest:
+      type: object
+      required: [email,password]
+      properties:
+        email:    { type: string, format: email }
+        password: { type: string }
+
+    UserDto:
+      type: object
+      properties:
+        id:           { type: integer }
+        name:         { type: string }
+        email:        { type: string }
+        groupName:    { type: string }
+        role:         { type: string }
+        supervisorId: { type: integer, nullable: true }
+
+    PracticeDto:
+      type: object
+      properties:
+        id:             { type: integer }
+        studentId:      { type: integer }
+        practiceName:   { type: string }
+        versionsAmount: { type: integer }
+        lastModified:   { type: string, format: date-time }
+
+    VersionDto:
+      type: object
+      properties:
+        id:            { type: integer }
+        versionNumber: { type: integer }
+        uploadTime:    { type: string, format: date-time }
+
+    BlockDto:
+      type: object
+      properties:
+        id:          { type: integer }
+        orderNumber: { type: integer }
+        contentType: { type: string, enum: [TITLE,TEXT,IMAGE,LIST,TABLE] }
+        content:     { type: string }
+
+    ChatDto:
+      type: object
+      properties:
+        id:           { type: integer }
+        studentId:    { type: integer }
+        supervisorId: { type: integer }
+
+    MessageDto:
+      type: object
+      properties:
+        id:          { type: integer }
+        chatId:      { type: integer }
+        senderId:    { type: integer }
+        messageText: { type: string }
+        sentTime:    { type: string, format: date-time }
+
+    NotificationDto:
+      type: object
+      properties:
+        id:        { type: integer }
+        userId:    { type: integer }
+        type:      { type: string }
+        message:   { type: string }
+        status:    { type: boolean }
+        createdAt: { type: string, format: date-time }

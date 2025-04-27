@@ -1,25 +1,32 @@
 package com.mirea.diploma.chat.controller;
 
-import com.mirea.diploma.chat.dto.MessageDto;
-import com.mirea.diploma.chat.model.Message;
-import com.mirea.diploma.chat.service.ChatService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.mirea.diploma.chat.dto.*;
+import com.mirea.diploma.chat.service.ChatService;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/chats")
+@RequiredArgsConstructor
 public class ChatController {
     private final ChatService chatService;
-    public ChatController(ChatService chatService) {
-        this.chatService = chatService;
+
+    @PostMapping
+    public ResponseEntity<ChatDto> createOrGet(@RequestParam Long studentId,
+                                               @RequestParam Long supervisorId) {
+        return ResponseEntity.ok(chatService.findOrCreateChat(studentId, supervisorId));
     }
-    @GetMapping("/{convId}/messages")
-    public ResponseEntity<List<Message>> getMessages(@PathVariable Long convId) {
-        return ResponseEntity.ok(chatService.getMessages(convId));
+
+    @GetMapping("/{chatId}/messages")
+    public ResponseEntity<List<MessageDto>> getMessages(@PathVariable Long chatId) {
+        return ResponseEntity.ok(chatService.getMessages(chatId));
     }
-    @PostMapping("/{convId}/messages")
-    public ResponseEntity<Message> sendMessage(@PathVariable Long convId, @RequestBody MessageDto dto) {
-        return ResponseEntity.ok(chatService.sendMessage(convId, dto));
+
+    @PostMapping("/{chatId}/messages")
+    public ResponseEntity<MessageDto> send(@PathVariable Long chatId,
+                                           @RequestBody MessageDto dto) {
+        return ResponseEntity.ok(chatService.sendMessage(chatId, dto));
     }
 }

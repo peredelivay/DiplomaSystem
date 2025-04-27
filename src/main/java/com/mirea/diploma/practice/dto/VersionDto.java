@@ -1,14 +1,14 @@
 package com.mirea.diploma.practice.dto;
 
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder (toBuilder = true)
-public class BlockDto {
+public class VersionDto {
     private Long id;
-    private Integer orderNumber;
-    private String contentType;
-    private String content;
+    private Integer versionNumber;
+    private LocalDateTime uploadTime;
 }

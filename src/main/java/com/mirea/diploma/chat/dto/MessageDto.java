@@ -1,10 +1,16 @@
 package com.mirea.diploma.chat.dto;
 
+import lombok.*;
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class MessageDto {
+    private Long id;
+    private Long chatId;
     private Long senderId;
     private String messageText;
-    public Long getSenderId() { return senderId; }
-    public void setSenderId(Long senderId) { this.senderId = senderId; }
-    public String getMessageText() { return messageText; }
-    public void setMessageText(String messageText) { this.messageText = messageText; }
+    private LocalDateTime sentTime;
 }

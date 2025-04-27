@@ -1,41 +1,41 @@
--- Роли
-INSERT INTO roles (role_id, name) VALUES (1, 'Student');
-INSERT INTO roles (role_id, name) VALUES (2, 'Supervisor');
-INSERT INTO roles (role_id, name) VALUES (3, 'Admin');
+-- roles
+INSERT INTO roles (id, name) VALUES
+  (1, 'STUDENT'),
+  (2, 'SUPERVISOR'),
+  (3, 'ADMIN');
 
--- Пользователи: студент, научный руководитель и администратор.
-INSERT INTO users (user_id, name, email, password, role_id)
-VALUES (2, 'Supervisor One', 'supervisor1@example.com', 'password', 2);
+-- users (mock passwords in plain text for testing only)
+INSERT INTO users (id, name, email, password, group_name, role_id, supervisor_id) VALUES
+  (1, 'Иван Студент', 'ivan.student@example.com', 'password1', 'ИКБО-32-21', 1, 2),
+  (2, 'Пётр Руководитель', 'petr.supervisor@example.com', 'password2', NULL,       2, NULL),
+  (3, 'Админ',             'admin@example.com',         'password3', NULL,         3, NULL);
 
-INSERT INTO users (user_id, name, email, password, role_id)
-VALUES (3, 'Admin One', 'admin@example.com', 'password', 3);
+-- practices
+INSERT INTO practices (id, student_id, practice_name, versions_amount, last_modified) VALUES
+  (1, 1, 'ВКР: Автоматизация процесса', 1, NOW());
 
-INSERT INTO users (user_id, name, email, password, role_id, supervisor_id)
-VALUES (1, 'Student One', 'student1@example.com', 'password', 1, 2);
+-- versions
+INSERT INTO versions (id, practice_id, version_number, upload_time) VALUES
+  (1, 1, 1, NOW());
 
--- Практика (отчет).
-INSERT INTO practice_reports (report_id, student_id, supervisor_id, status, created_at)
-VALUES (1, 1, 2, 'DRAFT', now());
+-- blocks
+INSERT INTO blocks (id, version_id, order_number, content_type, content) VALUES
+  (1, 1, 1, 'TITLE', 'Заголовок первой версии'),
+  (2, 1, 2, 'TEXT',  'Текст первого раздела отчёта.'),
+  (3, 1, 3, 'IMAGE', '/uploads/1/1/image1.png'),
+  (4, 1, 4, 'LIST',  '["Шаг 1","Шаг 2","Шаг 3"]'),
+  (5, 1, 5, 'TABLE', '{"headers":["Колонка A","Колонка B"],"rows":[[100,200],[300,400]]}');
 
--- Версия практики
-INSERT INTO practice_versions (version_number, created_at, practice_report_id, version_id, status)
-VALUES (1, now(), 1, 1, 'DRAFT');
+-- chats
+INSERT INTO chats (id, student_id, supervisor_id) VALUES
+  (1, 1, 2);
 
--- Блоки (пример текстового блока)
-INSERT INTO blocks (position, block_id, version_id, content, type)
-VALUES (1, 1, 1, 'This is sample text content for the practice report.', 'TEXT');
+-- messages
+INSERT INTO messages (id, chat_id, sender_id, message_text, sent_time) VALUES
+  (1, 1, 1, 'Здравствуйте, отправил черновик.', NOW()),
+  (2, 1, 2, 'Принял, скоро проверю.',  NOW());
 
--- Чат: создание беседы для студента с его руководителем
-INSERT INTO conversations (conv_id, student_id, supervisor_id)
-VALUES (1, 1, 2);
-
--- Сообщения в чате
-INSERT INTO messages (msg_id, conv_id, sender_id, message_text, sent_at)
-VALUES (1, 1, 1, 'Hello, I need help with my report.', now());
-
-INSERT INTO messages (msg_id, conv_id, sender_id, message_text, sent_at)
-VALUES (2, 1, 2, 'Sure, please send your draft for review.', now());
-
--- Уведомление для студента
-INSERT INTO notifications (notification_id, user_id, type, message, is_read, created_at)
-VALUES (1, 1, 'INFO', 'Your practice report has been saved as draft.', false, now());
+-- notifications
+INSERT INTO notifications (id, user_id, type, message, status, created_at) VALUES
+  (1, 1, 'INFO',     'Практика создана, приступайте к заполнению.', false, NOW()),
+  (2, 2, 'REMINDER', 'У студента новая версия практики на проверку.', false, NOW());

@@ -1,32 +1,33 @@
 package com.mirea.diploma.notification.model;
 
+import lombok.*;
+
 import jakarta.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notifications")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long notificationId;
-    private Long userId;
-    private String type;
-    @Column(columnDefinition = "TEXT")
-    private String message;
-    private Boolean isRead;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private Long id;
 
-    public Long getNotificationId() { return notificationId; }
-    public void setNotificationId(Long notificationId) { this.notificationId = notificationId; }
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
-    public Boolean getIsRead() { return isRead; }
-    public void setIsRead(Boolean isRead) { this.isRead = isRead; }
-    public Date getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private com.mirea.diploma.auth.model.User user;
+
+    private String type;    // INFO, WARNING, ERROR
+
+    @Column(nullable = false)
+    private String message;
+
+    @Column(nullable = false)
+    private Boolean status; // false = unread, true = read
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 }

@@ -1,31 +1,32 @@
 package com.mirea.diploma.chat.model;
 
+import lombok.*;
+
 import jakarta.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "messages")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long msgId;
-    @ManyToOne
-    @JoinColumn(name = "conv_id", nullable = false)
-    private Conversation conversation;
-    private Long senderId;
-    @Column(columnDefinition = "TEXT")
-    private String messageText;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date sentAt;
+    private Long id;
 
-    public Long getMsgId() { return msgId; }
-    public void setMsgId(Long msgId) { this.msgId = msgId; }
-    public Conversation getConversation() { return conversation; }
-    public void setConversation(Conversation conversation) { this.conversation = conversation; }
-    public Long getSenderId() { return senderId; }
-    public void setSenderId(Long senderId) { this.senderId = senderId; }
-    public String getMessageText() { return messageText; }
-    public void setMessageText(String messageText) { this.messageText = messageText; }
-    public Date getSentAt() { return sentAt; }
-    public void setSentAt(Date sentAt) { this.sentAt = sentAt; }
+    @ManyToOne
+    @JoinColumn(name = "chat_id", nullable = false)
+    private Chat chat;
+
+    @ManyToOne
+    @JoinColumn(name = "sender_id", nullable = false)
+    private com.mirea.diploma.auth.model.User sender;
+
+    @Column(name = "message_text", nullable = false)
+    private String messageText;
+
+    @Column(name = "sent_time", nullable = false)
+    private LocalDateTime sentTime;
 }
