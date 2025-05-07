@@ -18,7 +18,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/userdb
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 1337
+      SPRING_DATASOURCE_PASSWORD: ***
       SPRING_JPA_HIBERNATE_DDL_AUTO: create
     ports:
       - "8080:8080"
