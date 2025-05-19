@@ -1,5 +1,6 @@
 package com.mirea.diploma.practice.controller;
 
+import com.mirea.diploma.practice.model.Practice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.List;
 @RequestMapping("/api/practices")
 @RequiredArgsConstructor
 public class PracticeController {
+
     private final PracticeService svc;
 
     @GetMapping
@@ -21,6 +23,12 @@ public class PracticeController {
     @PostMapping
     public ResponseEntity<PracticeDto> create(@RequestBody PracticeDto dto) {
         return ResponseEntity.ok(svc.createPractice(dto));
+    }
+
+
+    @PutMapping("/{pracId}/changeStatus")
+    public ResponseEntity<ChangeStatusDto> changeStatus (@PathVariable Long pracId, @RequestBody ChangeStatusDto dto) {
+        return ResponseEntity.ok(svc.changeStatusOfPractice(pracId, dto));
     }
 
     @PutMapping("/{id}")
@@ -38,6 +46,12 @@ public class PracticeController {
     public ResponseEntity<VersionDto> createVersion(@PathVariable Long id,
                                                     @RequestBody VersionDto dto) {
         return ResponseEntity.ok(svc.createVersion(id, dto));
+    }
+
+    @PutMapping("/versions/{id}/comment")
+    public ResponseEntity<CommentDto> commentVersion(@PathVariable Long id,
+                                              @RequestBody CommentDto dto) {
+        return ResponseEntity.ok(svc.commentVersion(id, dto));
     }
 
     @GetMapping("/versions/{verId}/blocks")

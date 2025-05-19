@@ -30,6 +30,9 @@ public class Practice {
     @Column(name = "last_modified")
     private LocalDateTime lastModified;
 
+    @Column(name = "status", nullable = false)
+    private String status;
+
     @OneToMany(mappedBy = "practice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Version> versions;
 }

@@ -27,6 +27,9 @@ public class Version {
     @Column(name = "upload_time", nullable = false)
     private LocalDateTime uploadTime;
 
+    @Column(name = "comment")
+    private String comment;
+
     @OneToMany(mappedBy = "version", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Block> blocks;
 }

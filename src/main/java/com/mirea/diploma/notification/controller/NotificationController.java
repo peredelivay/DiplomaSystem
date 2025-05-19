@@ -1,5 +1,6 @@
 package com.mirea.diploma.notification.controller;
 
+import com.mirea.diploma.chat.dto.MessageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,5 +22,11 @@ public class NotificationController {
     @PutMapping("/{id}/read")
     public ResponseEntity<NotificationDto> read(@PathVariable Long id) {
         return ResponseEntity.ok(svc.markRead(id));
+    }
+
+    @PostMapping("/{userId}/send")
+    public ResponseEntity<NotificationDto> send(@PathVariable Long userId,
+                                           @RequestBody NotificationDto dto) {
+        return ResponseEntity.ok(svc.sendNotification(userId, dto));
     }
 }

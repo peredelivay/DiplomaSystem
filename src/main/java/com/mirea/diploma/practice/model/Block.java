@@ -25,7 +25,8 @@ public class Block {
     @Column(name = "content_type", nullable = false)
     private String contentType; // e.g. TITLE, TEXT, IMAGE, LIST, TABLE
 
-    @Lob
+    //@Lob
     @Column(nullable = false)
     private String content;
+
 }

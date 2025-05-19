@@ -16,9 +16,8 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private com.mirea.diploma.auth.model.User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     private String type;    // INFO, WARNING, ERROR
 

@@ -102,4 +102,20 @@ public class PracticeServiceImpl implements PracticeService {
         versionRepo.save(v);
         return dto.toBuilder().id(saved.getId()).build();
     }
+
+    @Override
+    public ChangeStatusDto changeStatusOfPractice(Long pracId, ChangeStatusDto dto) {
+            Practice p = practiceRepo.findById(pracId).orElseThrow();
+            p.setStatus(dto.getStatus());
+            Practice upd = practiceRepo.save(p);
+            return dto.toBuilder().status(upd.getStatus()).build();
+    }
+
+    @Override
+    public CommentDto commentVersion(Long id, CommentDto dto) {
+        Version v = versionRepo.findById(id).orElseThrow();
+        v.setComment(dto.getComment());
+        Version upd = versionRepo.save(v);
+        return dto.toBuilder().comment(upd.getComment()).build();
+    }
 }

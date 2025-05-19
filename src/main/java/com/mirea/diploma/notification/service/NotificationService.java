@@ -6,4 +6,7 @@ import java.util.List;
 public interface NotificationService {
     List<NotificationDto> getForUser(Long userId);
     NotificationDto markRead(Long id);
+    NotificationDto sendNotification(Long senderId, NotificationDto dto);
+
+
 }
